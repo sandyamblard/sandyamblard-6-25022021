@@ -1,10 +1,12 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const cors = require('cors');
 
 const app = express();
 
 const sauceRoutes = require('./routes/sauce');
+const userRoutes = require('./routes/user');
 
 //connection à la base de données MongoDB :
 mongoose.connect('mongodb+srv://userPekocko:071540@bddpekocko.vve7w.mongodb.net/BDDPekocko?retryWrites=true&w=majority', 
@@ -14,6 +16,7 @@ mongoose.connect('mongodb+srv://userPekocko:071540@bddpekocko.vve7w.mongodb.net/
   .catch(() => console.log('Connexion à MongoDB échouée !'));
 
 //configuration du CORS pour requetes exterieures quelque soit type de requetes: (premier middleware)
+app.use(cors());
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
@@ -23,7 +26,10 @@ app.use((req, res, next) => {
 
 app.use(bodyParser.json());  //transforme corps des requetes en objet js utilisable
 
-
+//utilisation des différentes routes définies par le router, avec uri de l'api
 app.use('/api/sauces', sauceRoutes);
+app.use('/api/auth', userRoutes);
 
 module.exports = app;
+
+
