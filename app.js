@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const path = require('path');
 
 const app = express();
 
@@ -25,6 +26,9 @@ app.use((req, res, next) => {
   });
 
 app.use(bodyParser.json());  //transforme corps des requetes en objet js utilisable
+
+//on fait en sorte de pouvoir accéder au dossier images en rendant le dossier images statique :
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 //utilisation des différentes routes définies par le router, avec uri de l'api
 app.use('/api/sauces', sauceRoutes);
