@@ -20,13 +20,15 @@ exports.createSauce = (req, res, next) =>{
      const sauceObject = req.file ?
      { //si nouvelle image :
          ...JSON.parse(req.body.sauce),
-         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}` //!!! rajouter suppression de l'ancienne image !
+         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}` //on rajoute une nouvelle image
      } : { ...req.body};//si pas de nouvelle image
     Sauce.updateOne({_id: req.params.id}, {...sauceObject, _id: req.params.id})
         .then(() => res.status(200).json({message : 'Sauce modifiée'}))
         .catch(error => res.status(400).json({error}));
 };
 
+/*const oldImageFilename = sauceObject.imageUrl.split('/images')[1], //on retire l'ancienne photo du dossier
+         fs.unlink(`images/${oldImageFilename}`, () =>{console.log('photo retirée prête pour mise à jour')}) */
 
 exports.deleteSauce = (req, res, next) =>{
     Sauce.findOne({ _id: req.params.id}) //on trouve la sauce ds la bdd
