@@ -15,7 +15,7 @@ exports.createSauce = (req, res, next) =>{
  };
 
 
- exports.modifySauce = (req, res, next) =>{
+ /*exports.modifySauce = (req, res, next) =>{
      //verifie si nouvel image ou pas
      const sauceObject = req.file ?
      { //si nouvelle image :
@@ -25,7 +25,32 @@ exports.createSauce = (req, res, next) =>{
     Sauce.updateOne({_id: req.params.id}, {...sauceObject, _id: req.params.id})
         .then(() => res.status(200).json({message : 'Sauce modifiée'}))
         .catch(error => res.status(400).json({error}));
+};*/
+
+exports.modifySauce = (req, res, next) =>{
+    if(req.file){//verifie si nouvelle image dans la requete
+        const sauceObject = {...JSON.parse(req.body.sauce),
+        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`}
+        Sauce.findOne({ _id: req.params.id})
+            .then(sauce =>{
+                const oldImageFilename = sauce.imageUrl.split('/images')[1]; //on récupère l'ancien nom de l'image
+                fs.unlink(`images/${oldImageFilename}`, () =>{console.log('photo retirée')}); //on retire l'ancienne image du dossier du serveur
+                //on update la sauce avec nouvelle image et les autres infos modifiées 
+                Sauce.updateOne({_id: req.params.id}, {...sauceObject, _id: req.params.id})
+                    .then(() => res.status(200).json({message : 'Sauce modifiée'}))
+                    .catch(error => res.status(400).json({error}));
+                })
+            .catch(error => res.status(400).json({error}))
+        
+    }else{ //si pas de nouvelle image : on reste avec requete telle quelle et on update la BDD
+        Sauce.updateOne({_id: req.params.id}, {...req.body, _id: req.params.id})
+            .then(() => res.status(200).json({message : 'Sauce modifiée'}))
+            .catch(error => res.status(400).json({error}));
+    }
+    
 };
+
+   
 
 /*const oldImageFilename = sauceObject.imageUrl.split('/images')[1], //on retire l'ancienne photo du dossier
          fs.unlink(`images/${oldImageFilename}`, () =>{console.log('photo retirée prête pour mise à jour')}) */
