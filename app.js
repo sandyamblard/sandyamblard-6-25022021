@@ -8,6 +8,7 @@ const app = express();
 
 const sauceRoutes = require('./routes/sauce');
 const userRoutes = require('./routes/user');
+const likeRoutes = require('./routes/like');
 
 //connection à la base de données MongoDB :
 mongoose.connect('mongodb+srv://userPekocko:071540@bddpekocko.vve7w.mongodb.net/BDDPekocko?retryWrites=true&w=majority', 
@@ -33,6 +34,7 @@ app.use('/images', express.static(path.join(__dirname, 'images')));
 //utilisation des différentes routes définies par le router, avec uri de l'api
 app.use('/api/sauces', sauceRoutes);
 app.use('/api/auth', userRoutes);
+app.use('/api/sauces', likeRoutes);
 
 module.exports = app;
 
