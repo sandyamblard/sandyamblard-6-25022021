@@ -1,9 +1,10 @@
-//stockage des middleware des routing
-const Sauce = require('../models/Sauce');
-const fs = require('fs'); //pour accéder aux systèmes d egestion de ficheirs de node
+const Sauce = require('../models/Sauce'); //importation des modèles Sauce
+const fs = require('fs'); //pour accéder aux systèmes de gestion de fichiers de node
 
+
+//middleware pour créer une nouvelle sauce (pr associer à route POST)
 exports.createSauce = (req, res, next) =>{
-    const sauceObject = JSON.parse(req.body.sauce); //objet javascript obetnu a partir de la requete front end
+    const sauceObject = JSON.parse(req.body.sauce); //objet javascript obtenu a partir de la requete front end
     delete sauceObject._id; //enlève id définit par requete front end, qui sera ensuite re-créé par mongoDB
      const sauce = new Sauce({
          ...sauceObject,
@@ -27,6 +28,7 @@ exports.createSauce = (req, res, next) =>{
         .catch(error => res.status(400).json({error}));
 };*/
 
+//middleware pour modifier une sauce existante (pr associer à route PUT)
 exports.modifySauce = (req, res, next) =>{
     if(req.file){//verifie si nouvelle image dans la requete
         const sauceObject = {...JSON.parse(req.body.sauce),
@@ -35,7 +37,7 @@ exports.modifySauce = (req, res, next) =>{
             .then(sauce =>{
                 const oldImageFilename = sauce.imageUrl.split('/images')[1]; //on récupère l'ancien nom de l'image
                 fs.unlink(`images/${oldImageFilename}`, () =>{console.log('photo retirée')}); //on retire l'ancienne image du dossier du serveur
-                //on update la sauce avec nouvelle image et les autres infos modifiées 
+                //on update la sauce ds BDD avec nouvelle image et les autres infos modifiées 
                 Sauce.updateOne({_id: req.params.id}, {...sauceObject, _id: req.params.id})
                     .then(() => res.status(200).json({message : 'Sauce modifiée'}))
                     .catch(error => res.status(400).json({error}));
@@ -47,14 +49,10 @@ exports.modifySauce = (req, res, next) =>{
             .then(() => res.status(200).json({message : 'Sauce modifiée'}))
             .catch(error => res.status(400).json({error}));
     }
-    
 };
 
-   
 
-/*const oldImageFilename = sauceObject.imageUrl.split('/images')[1], //on retire l'ancienne photo du dossier
-         fs.unlink(`images/${oldImageFilename}`, () =>{console.log('photo retirée prête pour mise à jour')}) */
-
+//middleware pour supprimer une sauce (pr associer à route DELETE)
 exports.deleteSauce = (req, res, next) =>{
     Sauce.findOne({ _id: req.params.id}) //on trouve la sauce ds la bdd
         .then(sauce =>{
@@ -68,12 +66,16 @@ exports.deleteSauce = (req, res, next) =>{
         .catch(error => res.status(400).json({error}));
 };
 
+
+//middleware pour obtenir les infos d'une seule sauce (pr associer à route GET)
 exports.getOneSauce = (req, res, next) =>{
     Sauce.findOne({_id: req.params.id})
         .then(sauce => res.status(200).json(sauce))
         .catch(error => res.status(404).json({error}));
 };
 
+
+//middleware pour obtenir les infos de toutes les sauces (pr associer à route GET)
 exports.getAllSauces = (req, res, next) =>{
     Sauce.find()
         .then(sauces => res.status(200).json(sauces))

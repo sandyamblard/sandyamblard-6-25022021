@@ -1,13 +1,16 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const cryptojs = require("crypto-js");
+const maskdata = require('maskdata');
 
 const User = require('../models/User');
 
 exports.signup = (req, res, next) => {
-    bcrypt.hash(req.body.password, 10)
+    const maskedEmail = maskdata.maskEmail2(req.body.email); //masquage de l'email de l'utilisateur avant stockage ds BDD
+    bcrypt.hash(req.body.password, 10) // hashage du mot de passage avec salage avec stockage ds BDD
       .then(hash => {
         const user = new User({
-          email: req.body.email,
+          email: maskedEmail,
           password: hash
         });
         user.save()
@@ -18,7 +21,8 @@ exports.signup = (req, res, next) => {
   };
 
 exports.login = (req, res, next) =>{
-    User.findOne({ email: req.body.email })
+    const maskedEmail = maskdata.maskEmail2(req.body.email);
+    User.findOne({ email: maskedEmail })
         .then(user =>{
             if(!user){
                 return res.status(401).json({error: "Utilisateur inexistant"})
