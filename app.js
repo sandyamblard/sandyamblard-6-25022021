@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
+const session = require('cookie-session');
 
 const app = express();
 
@@ -17,14 +18,25 @@ mongoose.connect('mongodb+srv://userPekocko:071540@bddpekocko.vve7w.mongodb.net/
   .then(() => console.log('Connexion à MongoDB réussie !'))
   .catch(() => console.log('Connexion à MongoDB échouée !'));
 
-//configuration du CORS pour requetes exterieures quelque soit type de requetes: (premier middleware)
+//configuration du CORS pour autoriser requetes exterieures : 
 app.use(cors());
 app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Origin', '*'); //autorise n'importe quelle origine
+    //définition des en-tetes qui seront utilisées
     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');//définit les méthodes autorisées
     next();
   });
+
+ //paramètre les cookies en http-only (sécurise la connection)
+ app.use(session({
+   secret:"s4Fe1y",
+   cookie:{
+     secure: true,
+     httpOnly: true,
+     domain: 'http://localhost:3000',
+   }
+ })); 
 
 app.use(bodyParser.json());  //transforme corps des requetes en objet js utilisable
 
@@ -37,5 +49,4 @@ app.use('/api/auth', userRoutes);
 app.use('/api/sauces', likeRoutes);
 
 module.exports = app;
-
 
