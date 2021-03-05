@@ -30,7 +30,7 @@ exports.likeOrDislike = (req, res, next) =>{
                 })  
             .catch(error => res.status(500).json({ error }))      
     }else if(req.body.like === -1){
-        Sauce.findOne({_id:req.params.id})//trouve la sauce concernée par la requête
+        Sauce.findOne({_id:req.params.id})//idem que pour like = 1 mais modifie le nb de dislike et le array usersDisliked
             .then(sauce =>{
                 if(!sauce.usersDisliked.includes(req.body.userId)){
                     sauce.dislikes += 1;
@@ -55,7 +55,7 @@ exports.likeOrDislike = (req, res, next) =>{
                         const dislikesUpadted = sauce.dislikes;
                         const id = sauce._id;
             
-                        Sauce.updateOne({_id: id}, {dislikes: dislikesUpadted, usersDisliked: usersDislikedUpdated}) //modif base de données avant de continuer avec code commun
+                        Sauce.updateOne({_id: id}, {dislikes: dislikesUpadted, usersDisliked: usersDislikedUpdated}) //modif base de données 
                         .then(() => res.status(200).json({ message: 'Dislike retiré !'}))
                         .catch(error => res.status(400).json({ error }));
                         
@@ -67,7 +67,7 @@ exports.likeOrDislike = (req, res, next) =>{
                         const likesUpadted = sauce.likes;
                         const id = sauce._id;
             
-                        Sauce.updateOne({_id: id}, {likes: likesUpadted, usersLiked: usersLikedUpdated}) //modif base de données avant de continuer avec code commun
+                        Sauce.updateOne({_id: id}, {likes: likesUpadted, usersLiked: usersLikedUpdated}) //modif base de données 
                         .then(() => res.status(200).json({ message: 'Like retiré !'}))
                         .catch(error => res.status(400).json({ error }));
 
@@ -75,12 +75,12 @@ exports.likeOrDislike = (req, res, next) =>{
                     }).catch(error => res.status(500).json({ error }))
                 
     }
- }
+ };
        
 
 /*
-pr une sauce donnée (son id est dans la requete --> trouver la sauce et sauvegarder ds variable), l'utilisateur (son userId est dans l'ojet userId de req.body) peut aimer ou détester la sauce
-si req.body.j'aime == 1 --> sauce.likes +=1, push userId ds sauce.usersLiked
-si req.body.j'aime == -1 --> sauce.dislikes +=1, supprime  userId de l'array sauce.usersLiked
-si req.body.j'aime == 0 --> vérifier si utilisateur est présent ds array like et le retirer + enlever 1 au number likes de la sauce ou même chose pour dislike
+pr une sauce donnée (son id est dans la requete --> l'utilisateur (son userId est dans l'ojet userId de req.body) peut aimer ou détester la sauce
+si req.body.like == 1 --> sauce.likes +=1, push userId ds sauce.usersLiked (condition a verifier : l'utilisateur de doit pas être déjà présent ds le array)
+si req.body.like == -1 --> sauce.dislikes +=1, push userId ds sauce.usersDisliked (condition a verifier : l'utilisateur de doit pas être déjà présent ds le array)
+si req.body.like == 0 --> vérifier si utilisateur est présent ds array like (ou dislike) et le retirer  + enlever 1 au compteur like (ou Dislike)
 */

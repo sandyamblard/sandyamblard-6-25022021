@@ -14,3 +14,5 @@ module.exports = (req, res, next) => {
         res.status(401).json({error: error | 'requete non authentifiée'})
     }
 };
+
+//vérifie l'authentification de l'utilisateur en vérifiant son identifiant (présent dans le token)

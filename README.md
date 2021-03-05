@@ -12,5 +12,5 @@ Puis :
 
 Puis faire fonctionner l'API :
 . npm install
-. node server
+. node server.js
 Le serveur s'exécute sur http://localhost:3000

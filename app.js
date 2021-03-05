@@ -1,3 +1,4 @@
+//importation des moduls node ou npm necessaires :
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
@@ -7,9 +8,11 @@ const session = require('cookie-session');
 
 const app = express();
 
+//importations des modules du projet :
 const sauceRoutes = require('./routes/sauce');
 const userRoutes = require('./routes/user');
 const likeRoutes = require('./routes/like');
+
 
 //connection à la base de données MongoDB :
 mongoose.connect('mongodb+srv://userPekocko:071540@bddpekocko.vve7w.mongodb.net/BDDPekocko?retryWrites=true&w=majority', 
@@ -17,6 +20,7 @@ mongoose.connect('mongodb+srv://userPekocko:071540@bddpekocko.vve7w.mongodb.net/
     useUnifiedTopology: true })
   .then(() => console.log('Connexion à MongoDB réussie !'))
   .catch(() => console.log('Connexion à MongoDB échouée !'));
+
 
 //configuration du CORS pour autoriser requetes exterieures : 
 app.use(cors());
@@ -28,6 +32,7 @@ app.use((req, res, next) => {
     next();
   });
 
+
  //paramètre les cookies en http-only (sécurise la connection)
  app.use(session({
    secret:"s4Fe1y",
@@ -38,10 +43,13 @@ app.use((req, res, next) => {
    }
  })); 
 
+
 app.use(bodyParser.json());  //transforme corps des requetes en objet js utilisable
+
 
 //on fait en sorte de pouvoir accéder au dossier images en rendant le dossier images statique :
 app.use('/images', express.static(path.join(__dirname, 'images')));
+
 
 //utilisation des différentes routes définies par le router, avec uri de l'api
 app.use('/api/sauces', sauceRoutes);

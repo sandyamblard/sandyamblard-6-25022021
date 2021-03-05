@@ -1,4 +1,4 @@
-const Sauce = require('../models/Sauce'); //importation des modèles Sauce
+const Sauce = require('../models/Sauce'); 
 const fs = require('fs'); //pour accéder aux systèmes de gestion de fichiers de node
 
 
@@ -15,18 +15,6 @@ exports.createSauce = (req, res, next) =>{
          .catch(error => res.status(400).json({error}));
  };
 
-
- /*exports.modifySauce = (req, res, next) =>{
-     //verifie si nouvel image ou pas
-     const sauceObject = req.file ?
-     { //si nouvelle image :
-         ...JSON.parse(req.body.sauce),
-         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}` //on rajoute une nouvelle image
-     } : { ...req.body};//si pas de nouvelle image
-    Sauce.updateOne({_id: req.params.id}, {...sauceObject, _id: req.params.id})
-        .then(() => res.status(200).json({message : 'Sauce modifiée'}))
-        .catch(error => res.status(400).json({error}));
-};*/
 
 //middleware pour modifier une sauce existante (pr associer à route PUT)
 exports.modifySauce = (req, res, next) =>{
