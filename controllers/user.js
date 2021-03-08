@@ -6,11 +6,11 @@ const maskdata = require('maskdata');
 const User = require('../models/User');
 
 exports.signup = (req, res, next) => {
-    const maskedEmail = maskdata.maskEmail2(req.body.email); //masquage de l'email de l'utilisateur avant stockage ds BDD
+    const cryptedMail = cryptojs.HmacSHA512(req.body.email, "KEY_FOR_CRYPTO_MAIL").toString(); //cryptage du mail avant stockage ds BDD
     bcrypt.hash(req.body.password, 10) // hashage du mot de passage avec salage avec stockage ds BDD
       .then(hash => {
         const user = new User({
-          email: maskedEmail,
+          email: cryptedMail,
           password: hash
         });
         user.save()
@@ -21,8 +21,8 @@ exports.signup = (req, res, next) => {
   };
 
 exports.login = (req, res, next) =>{
-    const maskedEmail = maskdata.maskEmail2(req.body.email);
-    User.findOne({ email: maskedEmail })
+    const cryptedMail = cryptojs.HmacSHA512(req.body.email, "KEY_FOR_CRYPTO_MAIL").toString();//cryptage du mail pour comparaison avec mail stocké ds BDD
+    User.findOne({ email: cryptedMail })
         .then(user =>{
             if(!user){
                 return res.status(401).json({error: "Utilisateur inexistant"})
