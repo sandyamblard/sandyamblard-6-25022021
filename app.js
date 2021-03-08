@@ -1,4 +1,4 @@
-//importation des moduls node ou npm necessaires :
+//importation des modules node ou npm necessaires :
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');

@@ -4,20 +4,7 @@ exports.likeOrDislike = (req, res, next) =>{
     if(req.body.like === 1){ //si user like : rajoute 1 au nombre de like de la sauce et rajoute Id de user dans array des usersLiked de la sauce
         Sauce.findOne({_id:req.params.id})//trouve la sauce concernée par la requête
             .then(sauce =>{
-                if(!sauce.usersLiked.includes(req.body.userId)){ //on vérifie que l'utilisateur n'aime aps déjà la sauce
-                    /*if(sauce.usersDisliked.includes(req.body.userId)){ //on vérifie qu el'utilisateur ne déteste pas la sauce auqel cas on retire son Id du tableau disliked
-                        const index = sauce.usersDisliked.indexOf(req.body.userId);
-                        sauce.usersDisliked.splice(index, 1);//on retire l'user du array dislike
-                        const usersDislikedUpdated=  sauce.usersDisliked; 
-                        sauce.dislikes -= 1; //on enlève 1 au nombre de dislike
-                        const dislikesUpadted = sauce.dislikes;
-                        const id = sauce._id;
-            
-                        Sauce.updateOne({_id: id}, {dislikes: dislikesUpadted, usersDisliked: usersDislikedUpdated}) //modif base de données avant de continuer avec code commun
-                        .then(() => res.status(200).json({ message: 'Dislike retiré !'}))
-                        .catch(error => res.status(400).json({ error }));
-//peut etre pas besoin car a priori on ne peut pas cliquer sur j'aime si on déteste... (on doit d'abord recliquer sur j'aime pas pour annuler le j'aime pas)
-                    }*///dans tous les cas (ou après retrait du je déteste) :
+                if(!sauce.usersLiked.includes(req.body.userId)) {//on vérifie que l'utilisateur n'aime aps déjà la sauce
                     sauce.likes += 1;
                     sauce.usersLiked.push(req.body.userId);
                     const id = sauce._id;
