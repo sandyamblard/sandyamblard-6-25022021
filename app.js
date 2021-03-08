@@ -16,7 +16,8 @@ const likeRoutes = require('./routes/like');
 
 //connection à la base de données MongoDB :
 mongoose.connect('mongodb+srv://userPekocko:071540@bddpekocko.vve7w.mongodb.net/BDDPekocko?retryWrites=true&w=majority', 
-    { useNewUrlParser: true,
+    { useCreateIndex: true,
+      useNewUrlParser: true,
     useUnifiedTopology: true })
   .then(() => console.log('Connexion à MongoDB réussie !'))
   .catch(() => console.log('Connexion à MongoDB échouée !'));
