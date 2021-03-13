@@ -1,12 +1,13 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const cryptojs = require("crypto-js");
-const maskdata = require('maskdata');
+require('dotenv').config();
+
 
 const User = require('../models/User');
 
 exports.signup = (req, res, next) => {
-    const cryptedMail = cryptojs.HmacSHA512(req.body.email, "KEY_FOR_CRYPTO_MAIL").toString(); //cryptage du mail avant stockage ds BDD
+    const cryptedMail = cryptojs.HmacSHA512(req.body.email, process.env.DB_KEY_FOR_MAIL).toString(); //cryptage du mail avant stockage ds BDD
     bcrypt.hash(req.body.password, 10) // hashage du mot de passage avec salage avec stockage ds BDD
       .then(hash => {
         const user = new User({
@@ -21,7 +22,7 @@ exports.signup = (req, res, next) => {
   };
 
 exports.login = (req, res, next) =>{
-    const cryptedMail = cryptojs.HmacSHA512(req.body.email, "KEY_FOR_CRYPTO_MAIL").toString();//cryptage du mail pour comparaison avec mail stocké ds BDD
+    const cryptedMail = cryptojs.HmacSHA512(req.body.email, process.env.DB_KEY_FOR_MAIL).toString();//cryptage du mail pour comparaison avec mail stocké ds BDD
     User.findOne({ email: cryptedMail })
         .then(user =>{
             if(!user){
@@ -36,7 +37,7 @@ exports.login = (req, res, next) =>{
                         userId: user._id,
                         token: jwt.sign(
                             { userId: user._id },
-                            'RANDOM_TOKEN_SECRET',
+                            process.env.DB_KEY_FOR_TOKEN,
                             {expiresIn: '24h'}
                         )
                     });

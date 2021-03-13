@@ -5,6 +5,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
 const session = require('cookie-session');
+const helmet = require('helmet');
+require('dotenv').config();
 
 const app = express();
 
@@ -15,7 +17,7 @@ const likeRoutes = require('./routes/like');
 
 
 //connection à la base de données MongoDB :
-mongoose.connect('mongodb+srv://userPekocko:071540@bddpekocko.vve7w.mongodb.net/BDDPekocko?retryWrites=true&w=majority', 
+mongoose.connect('mongodb+srv://'+ process.env.DB_INFOS_MONGO +'?retryWrites=true&w=majority', 
     { useCreateIndex: true,
       useNewUrlParser: true,
     useUnifiedTopology: true })
@@ -47,6 +49,7 @@ app.use((req, res, next) => {
 
 app.use(bodyParser.json());  //transforme corps des requetes en objet js utilisable
 
+app.use(helmet()); // sécurisation de l'application grâce au pulg-in helmet
 
 //on fait en sorte de pouvoir accéder au dossier images en rendant le dossier images statique :
 app.use('/images', express.static(path.join(__dirname, 'images')));
